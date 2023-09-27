@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from os import getenv
-# import sys
-# sys.path.append('/pandora-old-serverless')
 from mypandora_cloud.server import ChatBot
-# from pandora_old_serverless import *
 
 # _port = getenv('PORT')
 _port = "8019"
