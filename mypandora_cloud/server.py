@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from os import getenv
 from os.path import join, abspath, dirname
-from os import getenv
+import os
 import httpx
 from flask import Flask, jsonify, request, render_template, redirect, url_for, make_response
 from pandora.exts.hooks import hook_logging
@@ -18,7 +18,7 @@ from werkzeug.serving import WSGIRequestHandler
 
 mytoken = getenv('MYTOKEN')
 if not mytoken:
-    mytoken="""eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiI0ODI4NDM3OUBxcS5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci1XeGVmQm1oV3k2RmVZZDNRNmdKU29RdkwifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDYzOGRjNTg2M2UxMWZlMDA4ZjNjZTkwOSIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVuYWkub3BlbmFpLmF1dGgwYXBwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2OTQ5MjIwNzcsImV4cCI6MTY5NjEzMTY3NywiYXpwIjoiVGRKSWNiZTE2V29USHROOTVueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvcmdhbml6YXRpb24ud3JpdGUgb2ZmbGluZV9hY2Nlc3MifQ.uItWPbK-5oHCyaHzP7WNayOEKHFiV6gifQXMok3ls4cxbpcGZXTKTpljvmt9WN0obtOfRYkIuWyCN8rm76ydq00SmxizBNJ1Xj4CEW221efHp9j8PciI_u8dlksYDxYJZWUPIXSxLZcV8khIglIdYnVSVOZpIWjpzcz0yF9-yTUKP1U3q9-KqU8cE8SQUP1RmuZ8xOO1klA_Fi1_N8jENDfY97a7Mbj3oC1gkZH5MQuO7j9_tdWDhzFqK7XIBNrcB_x56Pto1P3w0iyVmR5SnlNZLNl0kX0pMSz1UGvl7qHvkgMTJNgdcCox76SCYqc8dRWjpD5sgQq0aroc8k6JsQ"""
+    mytoken="""pk-this-is-a-real-free-pool-token-for-everyone"""
 
 class ChatBot:
     __default_ip = '127.0.0.1'
@@ -97,6 +97,10 @@ class ChatBot:
 
     @staticmethod
     def __set_cookie(resp, token, expires):
+        global mytoken
+        os.environ['MYTOKEN'] = token
+        print('MYTOKEN',token)
+        mytoken = getenv('MYTOKEN')
         resp.set_cookie('access-token', token, expires=expires, path='/', domain=None, httponly=True, samesite='Lax')
         # resp.set_cookie('access-token', "", expires=expires, path='/', domain=None, httponly=True, samesite='Lax')
 
@@ -202,8 +206,8 @@ class ChatBot:
         return render_template('login.html', error=error, api_prefix=self.api_prefix)
 
     async def login_token(self):
-        # access_token = request.form.get('access_token')
-        access_token = mytoken
+        access_token = request.form.get('access_token')
+        # access_token = mytoken
         next_url = request.form.get('next')
         error = None
 
